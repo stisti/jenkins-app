@@ -27,8 +27,11 @@
     <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt" />
   </target>
   <target name="zip" depends="main.scpt">
-    <zip destfile="Jenkins.zip"
-	 basedir="." includes="Jenkins.app/**" />
+    <exec executable="zip">
+      <arg value="-r" />
+      <arg value="Jenkins.zip" />
+      <arg value="Jenkins.app" />
+    </exec>
   </target>
   <target name="publish" depends="zip">
     <exec executable="ftp">
