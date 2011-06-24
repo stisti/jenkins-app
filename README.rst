@@ -32,3 +32,8 @@ Uninstalling Jenkins
 Drag Jenkins.app to the Trash.
 
 If you used Jenkins for building software, running tests and such, there are some files in ~/.jenkins that you may want to move to Trash too.
+
+How do I make Jenkins.app start automatically?
+==============================
+
+Jenkins.app is a Mac application, and you can make any app start automatically when you log in by making it a *login item*. You do this by right-clicking on the app's Dock icon when it is running and choose to open it upon login.
