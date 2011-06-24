@@ -3,6 +3,7 @@
     Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
   </description>
   <target name="main.scpt">
+    <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts" />
     <exec executable="osascript">
         <arg value='-e' />
         <arg value='tell application "AppleScript Editor"' />
