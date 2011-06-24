@@ -17,9 +17,9 @@ Starting Jenkins
 
 1. Double-click on Jenkins.app
 2. If this is the first time you have run Jenkins.app, it will download the actual Jenkins server software.
-3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins You can also leave the command-line empty.
+3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins. You can also leave the command-line empty to go with the defaults.
 4. Click on OK to start the Jenkins server.
-5. Open your web browser and go to http://localhost:8080, unless you changed specified a different port on the command line.
+5. Open your web browser and go to http://localhost:8080, unless you specified a different port on the command line.
 
 Stopping Jenkins
 ===========
