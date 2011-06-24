@@ -1,0 +1,40 @@
+<project basedir="." default="main.scpt">
+  <description>
+    Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
+  </description>
+  <target name="main.scpt">
+    <exec executable="osascript">
+        <arg value='-e' />
+        <arg value='tell application "AppleScript Editor"' />
+        <arg value='-e' />
+        <arg value='open POSIX file "${basedir}/main.applescript"' />
+        <arg value='-e' />
+        <arg value='save document of front window as "script" in POSIX file "${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt"' />
+        <arg value='-e' />
+        <arg value='close document of front window' />
+        <arg value='-e' />
+        <arg value='end tell' />
+    </exec>
+  </target>
+  <target name="jenkins.war">
+    <get src="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" 
+	 dest="Jenkins.app/Contents/Resources/jenkins.war" 
+	 verbose="off" />
+  </target>
+  <target name="clean">
+    <delete file="Jenkins.app/Contents/Resources/jenkins.war" />
+    <delete file="Jenkins.zip" />
+    <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt" />
+  </target>
+  <target name="zip" depends="main.scpt">
+    <zip destfile="Jenkins.zip"
+	 basedir="." includes="Jenkins.app/**" />
+  </target>
+  <target name="publish" depends="zip">
+    <exec executable="ftp">
+        <arg value="-u" />
+        <arg value="stikka2@koti.welho.com:" />
+        <arg value="Jenkins.zip" />
+    </exec>
+  </target>
+</project>
