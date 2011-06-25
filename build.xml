@@ -1,4 +1,5 @@
 <project basedir="." default="main.scpt">
+  <property environment="env" />
   <description>
     Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
   </description>
@@ -24,13 +25,15 @@
   </target>
   <target name="clean">
     <delete file="Jenkins.app/Contents/Resources/jenkins.war" />
-    <delete file="Jenkins.zip" />
+    <delete>
+      <fileset file="Jenkins*.zip" />
+    </delete>
     <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt" />
   </target>
   <target name="zip" depends="main.scpt">
     <exec executable="zip">
       <arg value="-r" />
-      <arg value="Jenkins.zip" />
+      <arg value="Jenkins_${env.BUILD_NUMBER}.zip" />
       <arg value="Jenkins.app" />
     </exec>
   </target>
