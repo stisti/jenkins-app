@@ -76,9 +76,8 @@ on run
 end run
 
 on quit
-	display dialog "Quit Jenkins?" buttons {"No", "Quit"} default button "Quit" with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
-	if button returned of the result is "Quit" then
+	try
 		do shell script "launchctl remove org.jenkins-ci.jenkins"
-		continue quit
-	end if
+	end try
+	continue quit
 end quit
