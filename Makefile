@@ -7,4 +7,4 @@ test: test-main
 	@echo "*** ALL TESTS PASSED"
 
 test-main:
-	$(UNZIP) -l Jenkins.zip | grep main.scpt
+	$(UNZIP) -l Jenkins_*.zip | grep main.scpt
