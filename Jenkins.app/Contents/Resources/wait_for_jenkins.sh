@@ -5,3 +5,4 @@ while [ $(date +%s) -lt $timeout ] && ! curl -s http://localhost:$1 >/dev/null; 
     sleep 1
 done
 logger "Not waiting any longer"
+curl -s http://localhost:$1 >/dev/null

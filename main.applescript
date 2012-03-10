@@ -68,8 +68,10 @@ on run
 			quit
 		end try
 		set path_to_wait to (path to resource "wait_for_jenkins.sh" in bundle (path to me))
-		do shell script (quoted form of POSIX path of (path_to_wait as text)) & " 8080"
-		open location "http://localhost:8080/"
+		try
+			do shell script (quoted form of POSIX path of (path_to_wait as text)) & " 8080"
+			open location "http://localhost:8080/"
+		end try
 	end if
 end run
 
