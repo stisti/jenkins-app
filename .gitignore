@@ -1,3 +1,4 @@
 .DS_Store
 Jenkins*.zip
 Jenkins.app/Contents/Resources/Scripts/main.scpt
+*~
