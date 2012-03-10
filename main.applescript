@@ -4,7 +4,7 @@ Because Jenkins is an application with no GUI
 (other than the Web UI), this little app can be used
 to easily start and stop it.
 
-Copyright (c) 2011, Sami Tikka
+Copyright (c) 2011, 2012 Sami Tikka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
