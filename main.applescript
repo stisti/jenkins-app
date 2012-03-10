@@ -43,12 +43,7 @@ on run
 	if not war_exists then
 		try
 			display alert "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished."
-			tell application "URL Access Scripting"
-				with timeout of 1000 seconds
-					-- "http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
-					download "http://mirrors.jenkins-ci.org/war/latest/jenkins.war" to path_to_war replacing yes
-				end timeout
-			end tell
+			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of POSIX path of (path_to_war as text))
 		on error
 			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (POSIX path of path_to_war as text)
 			quit
