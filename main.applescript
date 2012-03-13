@@ -27,6 +27,7 @@ THE SOFTWARE. *)
 property commandlineArgs : ""
 
 on run
+	set path_to_wait to (path to resource "wait_for_jenkins.sh" in bundle (path to me))
 	try
 		set path_to_war to path to resource "jenkins.war" in bundle (path to me)
 		info for (path_to_war as alias) size yes
@@ -64,13 +65,10 @@ on run
 			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
 			set commandlineArgs to (text returned of the result)
 			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- java -jar " & (quoted form of POSIX path of (path_to_war as text)) & " " & commandlineArgs
-		on error number -128
-			quit
-		end try
-		set path_to_wait to (path to resource "wait_for_jenkins.sh" in bundle (path to me))
-		try
 			do shell script (quoted form of POSIX path of (path_to_wait as text)) & " 8080"
 			open location "http://localhost:8080/"
+		on error number -128
+			quit
 		end try
 	end if
 end run
