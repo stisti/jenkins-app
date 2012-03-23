@@ -64,7 +64,7 @@ on run
 		try
 			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
 			set commandlineArgs to (text returned of the result)
-			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- java -jar " & (quoted form of POSIX path of (path_to_war as text)) & " " & commandlineArgs
+			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of POSIX path of (path_to_war as text)) & " " & commandlineArgs
 			try
 				do shell script (quoted form of POSIX path of (path_to_wait as text)) & " http://localhost:8080/"
 				open location "http://localhost:8080/"
