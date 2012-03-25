@@ -1,3 +1,11 @@
+*********************
+Jenkins in your Dock!
+*********************
+
+.. image:: Jenkins-in-dock.png
+   :align: right
+   :alt: Jenkins icon in Dock
+
 Are you a Mac user? Do you like Mac applications because they are easy to install, uninstall, start and stop?
 
 Are you a Mac user who likes Jenkins? Do you find Jenkins a bit hard to install, uninstall, start and stop? Then Jenkins.app is for you.
@@ -21,6 +29,8 @@ Starting Jenkins
 4. Click on OK to start the Jenkins server.
 5. Your web browser will automatically open the Jenkins UI if you did not change the http port. If you changed the http port, you need to open localhost:<http port you gave to Jenkins> yourself. 
 
+Jenkins.app will remember the command-line and the next time you start, it will default to the same command-line you used the last time.
+
 Stopping Jenkins
 ===========
 
@@ -30,6 +40,12 @@ Upgrading Jenkins
 =================
 
 Jenkins project usually releases a new version every week. You can upgrade Jenkins normally in the Manage Jenkins page. Just tell Jenkins to restart itself. You do not have to stop and restart Jenkins.app. 
+
+If you want to upgrade Jenkins.app, you can do that too. Just download a new one and copy it over the old Jenkins.app.
+
+Unfortunately this will make Jenkins.app forget the last command-line. I do not yet know why this happens.
+
+Also, there is currently no mechanism in Jenkins.app to check if there are new versions of Jenkins.app.
 
 Uninstalling Jenkins
 =============
@@ -53,3 +69,21 @@ The official Jenkins installer for Mac sets up Jenkins as a launch daemon runnin
 Jenkins.app runs Jenkins in your user session, so Jenkins and the processes started by Jenkins have full access to e.g. Keychain or Windowserver.
 
 Jenkins.app is an alternative way to run Jenkins on the Mac. Or you can use the official installer. You can choose the best for your situation.
+
+
+Technical details
+=================
+
+Jenkins.app is a simple AppleScript application. (Meaning, you start AppleScript Editor, create a script, then save it as application bundle.)
+
+It is a stay-running-kind-of script. It just downloads jenkins.war, asks the user to specify the command-line and then runs ``java -jar jenkins.war``. 
+
+Or it doesn't actually run Jenkins, it outsources the responsibility to launchd, which is better equipped to handle this anyway. An AppleScript cannot wait until a subprocess dies and then restart it. Launchd can. Another benefit is that anything written to stdout and stderr by Jenkins automatically goes to system log. (You can easily view the system log using the Console.app in /Applications/Utilities.)
+
+
+TODO
+====
+
+Improvement ideas and bugs can be submitted to https://github.com/stisti/jenkins-app/issues
+
+There are already a few and some of them are such that I think they are beyond the capability of a simple AppleScript. I may have to create an actual Cocoa app.
