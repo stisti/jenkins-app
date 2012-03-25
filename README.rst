@@ -2,7 +2,7 @@
 Jenkins in your Dock!
 *********************
 
-.. image:: Jenkins-in-dock.png
+.. image:: http://koti.welho.com/stikka2/Jenkins-in-dock.png
    :align: right
    :alt: Jenkins icon in Dock
 
