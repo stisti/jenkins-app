@@ -26,30 +26,54 @@ THE SOFTWARE. *)
 
 property commandlineArgs : ""
 
-on run
-	set path_to_wait to (path to resource "wait_for_jenkins.sh" in bundle (path to me))
+on logger(message)
 	try
-		set path_to_war to path to resource "jenkins.war" in bundle (path to me)
-		info for (path_to_war as alias) size yes
-		set size_of_war to the size of the result
-		if size_of_war is less than 30000000 then
-			error "jenkins.war is too small" number 1001
-		end if
-		set war_exists to true
-	on error
-		set path_to_war to (path to me as string) & "Contents:Resources:jenkins.war"
-		set war_exists to false
+		do shell script "logger -t Jenkins.app '" & message & "'"
 	end try
+end logger
+
+on run
+	set path_to_wait to POSIX path of (path to resource "wait_for_jenkins.sh" in bundle (path to me))
+	set path_to_war to ""
 	
-	if not war_exists then
+	tell application "Finder"
+		set cache_folder to folder "Caches" of folder (path to library folder from user domain) as alias
 		try
-			display alert "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished."
-			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of POSIX path of (path_to_war as text))
+			make new folder at cache_folder with properties {name:"org.jenkins-ci.jenkins"}
+		end try
+		set jenkins_cache_folder to folder "org.jenkins-ci.jenkins" of folder cache_folder as alias
+		my logger("Jenkins cache folder is " & jenkins_cache_folder)
+		
+		try
+			set war to file "jenkins.war" of folder jenkins_cache_folder
+			-- Stupid workaround
+			if exists war then
+				do shell script "test -f " & (quoted form of POSIX path of (war as alias))
+			end if
+			set path_to_war to POSIX path of (war as alias)
+			my logger("jenkins.war exists at " & path_to_war)
 		on error
-			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (POSIX path of path_to_war as text)
+			try
+				move file (path to resource "jenkins.war" in bundle (path to me)) to jenkins_cache_folder
+				set war to the result as alias
+				set path_to_war to POSIX path of (war as alias)
+				my logger("jenkins.war moved from bundle to " & path_to_war)
+			end try
+		end try
+	end tell
+	
+	if path_to_war is equal to "" then
+		try
+			display dialog "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished." buttons {"OK"} default button 1 with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
+			set path_to_war to ((POSIX path of (jenkins_cache_folder as alias)) as text) & "jenkins.war"
+			logger("downloading jenkins.war to " & path_to_war)
+			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of path_to_war)
+		on error
+			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (jenkins_cache_folder as text)
 			quit
 		end try
 	end if
+	
 	
 	set jenkins_is_running to true
 	try
@@ -64,9 +88,9 @@ on run
 		try
 			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
 			set commandlineArgs to (text returned of the result)
-			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of POSIX path of (path_to_war as text)) & " " & commandlineArgs
+			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & commandlineArgs
 			try
-				do shell script (quoted form of POSIX path of (path_to_wait as text)) & " http://localhost:8080/"
+				do shell script (quoted form of path_to_wait) & " http://localhost:8080/"
 				open location "http://localhost:8080/"
 			on error
 				display alert "Unable to find Jenkins in port 8080" message "If you changed the default port, you must open the browser to Jenkins yourself." as informational
