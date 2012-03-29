@@ -32,9 +32,41 @@ on logger(message)
 	end try
 end logger
 
+on get_my_version()
+	tell application "Finder"
+		info for (path to me)
+		return short version of the result
+	end tell
+end get_my_version
+
+on this_is_latest_version()
+	set myver to get_my_version()
+	logger("Current version: " & myver)
+	set latest to do shell script "curl -sL https://github.com/downloads/stisti/jenkins-app/latest"
+	logger("Latest available version: " & myver)
+	if myver is less than latest then
+		return false
+	else
+		return true
+	end if
+end this_is_latest_version
+
 on run
 	set path_to_wait to POSIX path of (path to resource "wait_for_jenkins.sh" in bundle (path to me))
 	set path_to_war to ""
+	set path_to_icon to (path to resource "Jenkins.icns" in bundle (path to me))
+	
+	if this_is_latest_version() then
+		logger("Update check: This Jenkins.app is the latest version")
+	else
+		logger("Update check: There is a newer Jenkins.app available")
+		display dialog "A newer version of Jenkins.app is available. Would you like to update?" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now"
+		if button returned of the result is equal to "Update now" then
+			open location "https://github.com/stisti/jenkins-app/downloads"
+			quit
+			return
+		end if
+	end if
 	
 	tell application "Finder"
 		set cache_folder to folder "Caches" of folder (path to library folder from user domain) as alias
@@ -64,13 +96,14 @@ on run
 	
 	if path_to_war is equal to "" then
 		try
-			display dialog "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished." buttons {"OK"} default button 1 with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
+			display dialog "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished." buttons {"OK"} default button 1 with title "Jenkins" with icon path_to_icon
 			set path_to_war to ((POSIX path of (jenkins_cache_folder as alias)) as text) & "jenkins.war"
 			logger("downloading jenkins.war to " & path_to_war)
 			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of path_to_war)
 		on error
 			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (jenkins_cache_folder as text)
 			quit
+			return
 		end try
 	end if
 	
@@ -83,10 +116,10 @@ on run
 	end try
 	
 	if jenkins_is_running then
-		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me)) buttons {"OK"}
+		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon path_to_icon buttons {"OK"}
 	else
 		try
-			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon (path to resource "Jenkins.icns" in bundle (path to me))
+			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon path_to_icon
 			set commandlineArgs to (text returned of the result)
 			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & commandlineArgs
 			try
