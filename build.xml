@@ -3,7 +3,7 @@
   <description>
     Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
   </description>
-  <target name="main.scpt">
+  <target name="main.scpt" depends="Info.plist">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts" />
     <exec executable="osascript">
         <arg value='-e' />
@@ -17,6 +17,13 @@
         <arg value='-e' />
         <arg value='end tell' />
     </exec>
+  </target>
+  <target name="Info.plist">
+  	<copy file="Info.plist" tofile="Jenkins.app/Contents/Info.plist" 
+  		overwrite="true" />
+  	<replace file="Jenkins.app/Contents/Info.plist"
+  		token="@BUILD_NUMBER@"
+  		value="${env.BUILD_NUMBER}" />
   </target>
   <target name="jenkins.war">
     <get src="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" 

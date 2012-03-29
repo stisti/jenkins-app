@@ -20,6 +20,10 @@
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>aplt</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@BUILD_NUMBER@</string>
+	<key>CFBundleVersion</key>
+	<string>@BUILD_NUMBER@</string>
 	<key>LSMinimumSystemVersionByArchitecture</key>
 	<dict>
 		<key>x86_64</key>
