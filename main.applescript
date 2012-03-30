@@ -42,7 +42,7 @@ end get_my_version
 on this_is_latest_version()
 	set myver to get_my_version()
 	logger("Current version: " & myver)
-	set latest to do shell script "curl -sL https://github.com/downloads/stisti/jenkins-app/latest"
+	set latest to do shell script "curl -sfL https://github.com/downloads/stisti/jenkins-app/latest"
 	logger("Latest available version: " & myver)
 	if myver is less than latest then
 		return false
@@ -56,17 +56,20 @@ on run
 	set path_to_war to ""
 	set path_to_icon to (path to resource "Jenkins.icns" in bundle (path to me))
 	
-	if this_is_latest_version() then
-		logger("Update check: This Jenkins.app is the latest version")
-	else
-		logger("Update check: There is a newer Jenkins.app available")
-		display dialog "A newer version of Jenkins.app is available. Would you like to update?" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now"
-		if button returned of the result is equal to "Update now" then
-			open location "https://github.com/stisti/jenkins-app/downloads"
-			quit
-			return
+	-- Version check might fail, so guard against it.
+	try
+		if this_is_latest_version() then
+			logger("Update check: This Jenkins.app is the latest version")
+		else
+			logger("Update check: There is a newer Jenkins.app available")
+			display dialog "A newer version of Jenkins.app is available. Would you like to update?" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now"
+			if button returned of the result is equal to "Update now" then
+				open location "https://github.com/stisti/jenkins-app/downloads"
+				quit
+				return
+			end if
 		end if
-	end if
+	end try
 	
 	tell application "Finder"
 		set cache_folder to folder "Caches" of folder (path to library folder from user domain) as alias
