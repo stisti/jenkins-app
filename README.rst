@@ -34,18 +34,19 @@ Jenkins.app will remember the command-line and the next time you start, it will 
 Stopping Jenkins
 ===========
 
-Quit Jenkins.app.
+Quit Jenkins.app. It will warn you if Jenkins is busy building something, to keep you from killing
+that long build you did not know was running.
 
 Upgrading Jenkins
 =================
 
 Jenkins project usually releases a new version every week. You can upgrade Jenkins normally in the Manage Jenkins page. Just tell Jenkins to restart itself. You do not have to stop and restart Jenkins.app. 
 
-If you want to upgrade Jenkins.app, you can do that too. Just download a new one and copy it over the old Jenkins.app.
+Jenkins.app will check if there is a newer version available every time it starts.
+If you want to upgrade Jenkins.app, a browser window will open to the Jenkins.app
+download site. Download the new version, unpack and drop it on the old version.
 
 Unfortunately this will make Jenkins.app forget the last command-line. I do not yet know why this happens.
-
-Also, there is currently no mechanism in Jenkins.app to check if there are new versions of Jenkins.app.
 
 Uninstalling Jenkins
 =============
