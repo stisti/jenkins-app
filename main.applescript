@@ -51,7 +51,35 @@ on this_is_latest_version()
 	end if
 end this_is_latest_version
 
+on busy_executors()
+	global jenkins_url
+	try
+		set n to do shell script "curl -sf '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors/text()'"
+		logger("Number of busy executors: " & n)
+		return (n as number)
+	on error eMsg number eNum
+		logger("Error in busy check: " & eMsg & " (" & eNum & ")")
+		return 0
+	end try
+end busy_executors
+
+on set_shutdown_mode(onoff)
+	global jenkins_url
+	if onoff then
+		logger("Preparing for shutdown")
+		set command to "/quietDown"
+	else
+		logger("Canceling shutdown")
+		set command to "/cancelQuietDown"
+	end if
+	try
+		do shell script "curl -sf " & jenkins_url & command
+	end try
+end set_shutdown_mode
+
 on run
+	global jenkins_url
+	set jenkins_url to "http://localhost:8080/"
 	set path_to_wait to POSIX path of (path to resource "wait_for_jenkins.sh" in bundle (path to me))
 	set path_to_war to ""
 	set path_to_icon to (path to resource "Jenkins.icns" in bundle (path to me))
@@ -126,8 +154,8 @@ on run
 			set commandlineArgs to (text returned of the result)
 			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & commandlineArgs
 			try
-				do shell script (quoted form of path_to_wait) & " http://localhost:8080/"
-				open location "http://localhost:8080/"
+				do shell script (quoted form of path_to_wait) & " " & jenkins_url
+				open location jenkins_url
 			on error
 				display alert "Unable to find Jenkins in port 8080" message "If you changed the default port, you must open the browser to Jenkins yourself." as informational
 			end try
@@ -143,6 +171,25 @@ on run
 end run
 
 on quit
+	set_shutdown_mode(true)
+	set b to busy_executors()
+	if b is greater than 0 then
+		if b is equal to 1 then
+			set xxx to "There is 1 build in progress."
+		else
+			set xxx to "There are " & b & " builds in progress."
+		end if
+		display alert "Jenkins is busy building something." & return & "Are you sure you want to quit?" message xxx as critical buttons {"Quit", "Cancel", "Go to Jenkins"}
+		if button returned of the result is equal to "Go to Jenkins" then
+			set_shutdown_mode(false)
+			global jenkins_url
+			open location jenkins_url
+			return
+		else if button returned of the result is equal to "Cancel" then
+			set_shutdown_mode(false)
+			return
+		end if
+	end if
 	try
 		do shell script "launchctl remove org.jenkins-ci.jenkins"
 	end try
