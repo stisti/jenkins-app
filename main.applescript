@@ -24,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. *)
 
-property commandlineArgs : ""
+property jenkins_command_args : ""
 property jenkins_url : "http://localhost:8080/"
 
 on logger(message)
@@ -94,6 +94,7 @@ on run
 			if button returned of the result is equal to "Update now" then
 				open location "https://github.com/stisti/jenkins-app/downloads"
 				quit
+				(* To force quit to happen without continuing to the end of the handler, use the return statement to immediately return from handler. *)
 				return
 			end if
 		end if
@@ -134,6 +135,7 @@ on run
 		on error
 			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (jenkins_cache_folder as text)
 			quit
+			(* To force quit to happen without continuing to the end of the handler, use the return statement to immediately return from handler. *)
 			return
 		end try
 	end if
@@ -150,16 +152,16 @@ on run
 		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon path_to_icon buttons {"OK"}
 	else
 		try
-			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon path_to_icon
-			set commandlineArgs to (text returned of the result)
+			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
+			set jenkins_command_args to (text returned of the result)
 			
 			tell utils
-				set jenkins_url to create_jenkins_url from commandlineArgs
+				set jenkins_url to create_jenkins_url from jenkins_command_args
 			end tell
 			
 			logger("Calculated Jenkins URL: " & jenkins_url)
 			
-			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & commandlineArgs
+			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & jenkins_command_args
 			try
 				do shell script (quoted form of path_to_wait) & " " & jenkins_url
 				open location jenkins_url
