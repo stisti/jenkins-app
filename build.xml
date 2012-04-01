@@ -5,17 +5,10 @@
   </description>
   <target name="main.scpt" depends="Info.plist">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts" />
-    <exec executable="osascript">
-        <arg value='-e' />
-        <arg value='tell application "AppleScript Editor"' />
-        <arg value='-e' />
-        <arg value='open POSIX file "${basedir}/main.applescript"' />
-        <arg value='-e' />
-        <arg value='save document of front window as "script" in POSIX file "${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt"' />
-        <arg value='-e' />
-        <arg value='close document of front window' />
-        <arg value='-e' />
-        <arg value='end tell' />
+    <exec executable="osacompile">
+        <arg value='-o' />
+        <arg value='${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt' />
+        <arg value='${basedir}/main.applescript' />
     </exec>
   </target>
   <target name="Info.plist">
