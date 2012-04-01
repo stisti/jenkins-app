@@ -1,54 +1,51 @@
+<?xml version="1.0"?>
 <project basedir="." default="main.scpt">
-  <property environment="env" />
+  <property environment="env"/>
   <description>
     Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
   </description>
   <target name="main.scpt" depends="Info.plist,utils.scpt">
-    <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts" />
+    <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts"/>
     <exec executable="osacompile">
-        <arg value='-o' />
-        <arg value='${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt' />
-        <arg value='${basedir}/main.applescript' />
+      <arg value="-o"/>
+      <arg value="${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt"/>
+      <arg value="${basedir}/main.applescript"/>
     </exec>
   </target>
   <target name="utils.scpt">
-  <exec executable="osacompile">
-  <arg value="-o" />
-  <arg value="${basedir}/Jenkins.app/Contents/Resources/utils.scpt" />
-  <arg value="${basedir}/utils.applescript" />
-  </exec>
+    <exec executable="osacompile">
+      <arg value="-o"/>
+      <arg value="${basedir}/Jenkins.app/Contents/Resources/utils.scpt"/>
+      <arg value="${basedir}/utils.applescript"/>
+    </exec>
   </target>
   <target name="Info.plist">
-  	<copy file="Info.plist" tofile="Jenkins.app/Contents/Info.plist" 
-  		overwrite="true" />
-  	<replace file="Jenkins.app/Contents/Info.plist"
-  		token="@BUILD_NUMBER@"
-  		value="${env.BUILD_NUMBER}" />
+    <copy file="Info.plist" tofile="Jenkins.app/Contents/Info.plist" overwrite="true"/>
+    <replace file="Jenkins.app/Contents/Info.plist" token="@BUILD_NUMBER@" value="${env.BUILD_NUMBER}"/>
   </target>
   <target name="jenkins.war">
-    <get src="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" 
-	 dest="Jenkins.app/Contents/Resources/jenkins.war" 
-	 verbose="off" />
+    <get src="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" dest="Jenkins.app/Contents/Resources/jenkins.war" verbose="off"/>
   </target>
   <target name="clean">
-    <delete file="Jenkins.app/Contents/Resources/jenkins.war" />
+    <delete file="Jenkins.app/Contents/Resources/jenkins.war"/>
     <delete>
-      <fileset file="Jenkins*.zip" />
+      <fileset file="Jenkins*.zip"/>
     </delete>
-    <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt" />
+    <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt"/>
   </target>
   <target name="zip" depends="main.scpt">
     <exec executable="zip">
-      <arg value="-r" />
-      <arg value="Jenkins_${env.BUILD_NUMBER}.zip" />
-      <arg value="Jenkins.app" />
+      <arg value="-r"/>
+      <arg value="Jenkins_${env.BUILD_NUMBER}.zip"/>
+      <arg value="Jenkins.app"/>
     </exec>
   </target>
   <target name="publish" depends="zip">
     <exec executable="ftp">
-        <arg value="-u" />
-        <arg value="stikka2@koti.welho.com:" />
-        <arg value="Jenkins.zip" />
+      <arg value="-u"/>
+      <arg value="stikka2@koti.welho.com:"/>
+      <arg value="Jenkins.zip"/>
     </exec>
   </target>
 </project>
+
