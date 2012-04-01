@@ -1,6 +1,7 @@
 .DS_Store
 Jenkins*.zip
 Jenkins.app/Contents/Resources/Scripts/main.scpt
+Jenkins.app/Contents/Resources/utils.scpt
 Jenkins.app/Contents/Info.plist
 *~
 latest

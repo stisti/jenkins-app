@@ -3,13 +3,20 @@
   <description>
     Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
   </description>
-  <target name="main.scpt" depends="Info.plist">
+  <target name="main.scpt" depends="Info.plist,utils.scpt">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts" />
     <exec executable="osacompile">
         <arg value='-o' />
         <arg value='${basedir}/Jenkins.app/Contents/Resources/Scripts/main.scpt' />
         <arg value='${basedir}/main.applescript' />
     </exec>
+  </target>
+  <target name="utils.scpt">
+  <exec executable="osacompile">
+  <arg value="-o" />
+  <arg value="${basedir}/Jenkins.app/Contents/Resources/utils.scpt" />
+  <arg value="${basedir}/utils.applescript" />
+  </exec>
   </target>
   <target name="Info.plist">
   	<copy file="Info.plist" tofile="Jenkins.app/Contents/Info.plist" 

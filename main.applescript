@@ -25,6 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. *)
 
 property commandlineArgs : ""
+property jenkins_url : "http://localhost:8080/"
 
 on logger(message)
 	try
@@ -52,9 +53,8 @@ on this_is_latest_version()
 end this_is_latest_version
 
 on busy_executors()
-	global jenkins_url
 	try
-		set n to do shell script "curl -sf '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors/text()'"
+		set n to do shell script "curl -sfk '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors/text()'"
 		logger("Number of busy executors: " & n)
 		return (n as number)
 	on error eMsg number eNum
@@ -64,7 +64,6 @@ on busy_executors()
 end busy_executors
 
 on set_shutdown_mode(onoff)
-	global jenkins_url
 	if onoff then
 		logger("Preparing for shutdown")
 		set command to "/quietDown"
@@ -73,13 +72,14 @@ on set_shutdown_mode(onoff)
 		set command to "/cancelQuietDown"
 	end if
 	try
-		do shell script "curl -sf " & jenkins_url & command
+		do shell script "curl -sfk " & jenkins_url & command
 	end try
 end set_shutdown_mode
 
 on run
-	global jenkins_url
-	set jenkins_url to "http://localhost:8080/"
+	tell application "Finder"
+		set utils to load script (path to resource "utils.scpt" in bundle (path to me))
+	end tell
 	set path_to_wait to POSIX path of (path to resource "wait_for_jenkins.sh" in bundle (path to me))
 	set path_to_war to ""
 	set path_to_icon to (path to resource "Jenkins.icns" in bundle (path to me))
@@ -152,6 +152,13 @@ on run
 		try
 			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer commandlineArgs with title "Jenkins" with icon path_to_icon
 			set commandlineArgs to (text returned of the result)
+			
+			tell utils
+				set jenkins_url to create_jenkins_url from commandlineArgs
+			end tell
+			
+			logger("Calculated Jenkins URL: " & jenkins_url)
+			
 			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java -jar " & (quoted form of path_to_war) & " " & commandlineArgs
 			try
 				do shell script (quoted form of path_to_wait) & " " & jenkins_url
@@ -182,7 +189,6 @@ on quit
 		display alert "Jenkins is busy building something." & return & "Are you sure you want to quit?" message xxx as critical buttons {"Quit", "Cancel", "Go to Jenkins"}
 		if button returned of the result is equal to "Go to Jenkins" then
 			set_shutdown_mode(false)
-			global jenkins_url
 			open location jenkins_url
 			return
 		else if button returned of the result is equal to "Cancel" then
