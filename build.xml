@@ -2,7 +2,7 @@
 <project basedir="." default="main.scpt">
   <property environment="env"/>
   <description>
-    Build a working Jenkins.app by compiling main.applescript into main.scpt required by app.
+    Build a working Jenkins.app by compiling applescript files and adding Info.plist.
   </description>
   <target name="main.scpt" depends="Info.plist,utils.scpt">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts"/>
@@ -32,6 +32,8 @@
       <fileset file="Jenkins*.zip"/>
     </delete>
     <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt"/>
+    <delete file="Jenkins.app/Contents/Resources/utils.scpt"/>
+    <delete file="Jenkins.app/Contents/Info.plist"/>
   </target>
   <target name="zip" depends="main.scpt">
     <exec executable="zip">
