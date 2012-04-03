@@ -101,11 +101,18 @@ on run
 	end try
 	
 	tell application "Finder"
-		set cache_folder to folder "Caches" of folder (path to library folder from user domain) as alias
+		-- Find Cache folder or create it if it did not exist
 		try
-			make new folder at cache_folder with properties {name:"org.jenkins-ci.jenkins"}
+			set cache_folder to folder "Caches" of folder (path to library folder from user domain) as alias
+		on error
+			set cache_folder to (make new folder at (path to library folder from user domain) with properties {name:"Caches"}) as alias
 		end try
-		set jenkins_cache_folder to folder "org.jenkins-ci.jenkins" of folder cache_folder as alias
+		-- Create a folder for Jenkins
+		try
+			set jenkins_cache_folder to folder "org.jenkins-ci.jenkins" of folder cache_folder as alias
+		on error
+			set jenkins_cache_folder to (make new folder at cache_folder with properties {name:"org.jenkins-ci.jenkins"}) as alias
+		end try
 		my logger("Jenkins cache folder is " & jenkins_cache_folder)
 		
 		try
