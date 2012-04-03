@@ -27,7 +27,7 @@ Starting Jenkins
 2. If this is the first time you have run Jenkins.app, it will download the actual Jenkins server software.
 3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins. You can also leave the command-line empty to go with the defaults.
 4. Click on OK to start the Jenkins server.
-5. Your web browser will automatically open the Jenkins UI if you did not change the http port. If you changed the http port, you need to open localhost:<http port you gave to Jenkins> yourself. 
+5. Your web browser will automatically open the Jenkins UI.
 
 Jenkins.app will remember the command-line and the next time you start, it will default to the same command-line you used the last time.
 
