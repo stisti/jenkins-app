@@ -134,13 +134,14 @@ on run
 	end tell
 	
 	if path_to_war is equal to "" then
+		display dialog "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished." buttons {"OK"} default button 1 with title "Jenkins" with icon path_to_icon
+		set path_to_war to ((POSIX path of (jenkins_cache_folder as alias)) as text) & "jenkins.war"
+		logger("downloading jenkins.war to " & path_to_war)
 		try
-			display dialog "Click OK to start downloading jenkins.war. Another dialog will appear when download has finished." buttons {"OK"} default button 1 with title "Jenkins" with icon path_to_icon
-			set path_to_war to ((POSIX path of (jenkins_cache_folder as alias)) as text) & "jenkins.war"
-			logger("downloading jenkins.war to " & path_to_war)
-			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of path_to_war)
-		on error
-			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (jenkins_cache_folder as text)
+			-- http://mirrors.jenkins-ci.org/war/latest/jenkins.war
+			do shell script "curl -sfL http://mirrors.jenkins-ci.org/war/latest/jenkins.war -o " & (quoted form of path_to_war) & " 2>&1"
+		on error err_msg number err_num
+			display alert "Something went wrong in downloading jenkins.war. Download it manually into " & (jenkins_cache_folder as text) message "curl error: " & err_msg & return & "curl exit code was " & err_num
 			quit
 			(* To force quit to happen without continuing to the end of the handler, use the return statement to immediately return from handler. *)
 			return
