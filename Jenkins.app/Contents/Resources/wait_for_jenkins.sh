@@ -1,5 +1,5 @@
 #!/bin/bash
-timeout=$(($(date +%s) + 60))
+timeout=$(($(date +%s) + 90))
 while [ $(date +%s) -lt $timeout ] && ! curl -sfk "$1" >/dev/null; do
     logger -t Jenkins.app "Jenkins is not responding yet, sleeping..."
     sleep 1

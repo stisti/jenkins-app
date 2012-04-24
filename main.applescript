@@ -178,7 +178,7 @@ on run
 				do shell script (quoted form of path_to_wait) & " " & jenkins_url
 				open location jenkins_url
 			on error
-				display alert "Unable to find Jenkins in port 8080" message "If you changed the default port, you must open the browser to Jenkins yourself." as informational
+				display alert "Timed out waiting for Jenkins to start." message "Maybe Jenkins starts very slowly on this host?" as informational
 			end try
 		on error errMsg number errNum
 			if errNum is equal to -128 then
