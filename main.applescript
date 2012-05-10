@@ -91,7 +91,7 @@ on run
 			logger("Update check: This Jenkins.app is the latest version")
 		else
 			logger("Update check: There is a newer Jenkins.app available")
-			display dialog "A newer version of Jenkins.app is available. Would you like to update?" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now"
+			display dialog "A newer version of Jenkins.app is available. Would you like to update?" & return & "(Automatic startup in 15 seconds.)" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now" giving up after 15
 			if button returned of the result is equal to "Update now" then
 				open location "https://github.com/stisti/jenkins-app/downloads"
 				quit
@@ -161,11 +161,14 @@ on run
 		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon path_to_icon buttons {"OK"}
 	else
 		try
-			display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer java_command_args with title "Jenkins" with icon path_to_icon
-			set java_command_args to (text returned of the result)
-			
-			display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
-			set jenkins_command_args to (text returned of the result)
+			display dialog "Do you want to customize Jenkins startup?" & return & "(Automatic startup in 15 seconds.)" buttons {"Use defaults", "Change defaults"} default button "Change defaults" with title "Jenkins" with icon path_to_icon giving up after 15
+			if button returned of the result is equal to "Change defaults" then
+				display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer java_command_args with title "Jenkins" with icon path_to_icon
+				set java_command_args to (text returned of the result)
+				
+				display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
+				set jenkins_command_args to (text returned of the result)
+			end if
 			
 			tell utils
 				set jenkins_url to create_jenkins_url from jenkins_command_args
