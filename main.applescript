@@ -161,14 +161,16 @@ on run
 		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon path_to_icon buttons {"OK"}
 	else
 		try
-			display dialog "Do you want to customize Jenkins startup?" & return & "(Automatic startup in 15 seconds.)" buttons {"Use defaults", "Change defaults"} default button "Change defaults" with title "Jenkins" with icon path_to_icon giving up after 15
-			if button returned of the result is equal to "Change defaults" then
-				display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer java_command_args with title "Jenkins" with icon path_to_icon
-				set java_command_args to (text returned of the result)
-				
-				display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
-				set jenkins_command_args to (text returned of the result)
-			end if
+			ignoring application responses
+				display dialog "Do you want to customize Jenkins startup?" & return & "(Automatic startup in 15 seconds.)" buttons {"Use defaults", "Change defaults"} default button "Change defaults" with title "Jenkins" with icon path_to_icon giving up after 15
+				if button returned of the result is equal to "Change defaults" then
+					display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer java_command_args with title "Jenkins" with icon path_to_icon
+					set java_command_args to (text returned of the result)
+					
+					display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
+					set jenkins_command_args to (text returned of the result)
+				end if
+			end ignoring
 			
 			tell utils
 				set jenkins_url to create_jenkins_url from jenkins_command_args
