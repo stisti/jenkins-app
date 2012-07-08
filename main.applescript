@@ -24,8 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. *)
 
-property jenkins_command_args : ""
-property java_command_args : ""
+property prefs_file : "~/Library/Preferences/org.jenkins-ci.jenkins.plist"
 property jenkins_url : "http://localhost:8080/"
 
 on logger(message)
@@ -163,26 +162,33 @@ on run
 	if jenkins_is_running then
 		display dialog "Found an already-running Jenkins and adopted that." with title "Jenkins" with icon path_to_icon buttons {"OK"}
 	else
+		tell utils
+			set prefs to get_prefs(prefs_file)
+		end tell
 		try
 			activate
 			with timeout of 300 seconds
 				display dialog "Do you want to customize Jenkins startup?" & return & "(Automatic startup in 15 seconds.)" buttons {"Use defaults", "Change defaults"} default button "Change defaults" with title "Jenkins" with icon path_to_icon giving up after 15
 				if button returned of the result is equal to "Change defaults" then
-					display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer java_command_args with title "Jenkins" with icon path_to_icon
-					set java_command_args to (text returned of the result)
+					display dialog "Use these arguments for JVM:" & return & "(e.g. -Xmx2G É It is OK to leave it empty too.)" default answer (java_command_args of prefs) with title "Jenkins" with icon path_to_icon
+					set java_command_args of prefs to (text returned of the result)
 					
-					display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer jenkins_command_args with title "Jenkins" with icon path_to_icon
-					set jenkins_command_args to (text returned of the result)
+					display dialog "Run Jenkins with these arguments:" & return & "(e.g. --httpPort=N --prefix=/jenkins ... It is OK to leave it empty too.)" default answer (jenkins_command_args of prefs) with title "Jenkins" with icon path_to_icon
+					set jenkins_command_args of prefs to (text returned of the result)
+					
+					tell utils
+						save_prefs(prefs_file, prefs)
+					end tell
 				end if
 			end timeout
 			
 			tell utils
-				set jenkins_url to create_jenkins_url from jenkins_command_args
+				set jenkins_url to create_jenkins_url from (jenkins_command_args of prefs)
 			end tell
 			
 			logger("Calculated Jenkins URL: " & jenkins_url)
 			
-			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java " & java_command_args & " -jar " & (quoted form of path_to_war) & " " & jenkins_command_args
+			do shell script "launchctl submit -l org.jenkins-ci.jenkins -- env SSH_AUTH_SOCK=$SSH_AUTH_SOCK java " & (java_command_args of prefs) & " -jar " & (quoted form of path_to_war) & " " & (jenkins_command_args of prefs)
 			try
 				do shell script (quoted form of path_to_wait) & " " & jenkins_url
 				open location jenkins_url

@@ -60,6 +60,29 @@ to create_jenkins_url from jenkins_command_line
 	return jenkins_url
 end create_jenkins_url
 
+on save_prefs(plistfile_path, prefs)
+	tell application "System Events"
+		set the parent_dictionary to make new property list item with properties {kind:record}
+		--		set the plistfile_path to "~/Library/Preferences/org.jenkins-ci.jenkins.plist"
+		set pl to make new property list file with properties {contents:parent_dictionary, name:plistfile_path}
+		tell pl
+			make new property list item at end with properties {kind:string, name:"java_command_args", value:(java_command_args of prefs)}
+			make new property list item at end with properties {kind:string, name:"jenkins_command_args", value:(jenkins_command_args of prefs)}
+		end tell
+	end tell
+end save_prefs
+
+on get_prefs(plistfile_path)
+	try
+		tell application "System Events"
+			set plf to property list file (plistfile_path)
+			return value of plf
+		end tell
+	on error
+		return {java_command_args:"", jenkins_command_args:""}
+	end try
+end get_prefs
+
 -- Unit tests (execute by hitting cmd+R)
 on run
 	set as_list to make_list of "a b c" by " "
@@ -92,5 +115,28 @@ on run
 	
 	if (create_jenkins_url from "--httpsPort=8443 --httpPort=-1 --prefix=/jenkins") is not equal to "https://localhost:8443/jenkins/" then
 		error
+	end if
+	
+	set java to "abc"
+	set jenkins to "def"
+	save_prefs("/tmp/jenkins-app-unit-prefs.plist", {java_command_args:java, jenkins_command_args:jenkins})
+	set dict to get_prefs("/tmp/jenkins-app-unit-prefs.plist")
+	
+	if (java_command_args of dict) is not equal to java then
+		error java & " is not " & (java_command_args of dict)
+	end if
+	
+	if (jenkins_command_args of dict) is not equal to jenkins then
+		error jenkins & " is not " & (jenkins_command_args of dict)
+	end if
+	
+	set dict2 to get_prefs("/tmp/jenkins-app-unit-not.plist")
+	
+	if (java_command_args of dict2) is not equal to "" then
+		error "java_command_args should have been empty"
+	end if
+	
+	if (jenkins_command_args of dict2) is not equal to "" then
+		error "jenkins_command_args should have been empty"
 	end if
 end run
