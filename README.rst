@@ -22,11 +22,11 @@ From ready-to-run packages:
 3. (Optional) Move Jenkins.app wherever you want.
 4. You're done!
 
-Build it from the source using ant_:
+Or you can also build it from the source using ant_ (which should be pre-installed on any Mac):
 
 1. ``export BUILD_NUMBER=0 # Or any other number you want``
 2. ``ant``
-3. You are done!
+3. You're done!
 
 
 Starting Jenkins
