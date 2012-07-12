@@ -15,10 +15,19 @@ Are you a Mac user who likes Jenkins? Do you find Jenkins a bit hard to install,
 Installation
 =======
 
+From ready-to-run packages:
+
 1. Download Jenkins.zip from https://github.com/stisti/jenkins-app/downloads.
 2. Double-click Jenkins.zip to unpack Jenkins.app.
 3. (Optional) Move Jenkins.app wherever you want.
 4. You're done!
+
+Build it from the source using ant_:
+
+1. ``export BUILD_NUMBER=0 # Or any other number you want``
+2. ``ant``
+3. You are done!
+
 
 Starting Jenkins
 ==========
@@ -88,3 +97,5 @@ TODO
 Improvement ideas and bugs can be submitted to https://github.com/stisti/jenkins-app/issues
 
 There are already a few and some of them are such that I think they are beyond the capability of a simple AppleScript. I may have to create an actual Cocoa app.
+
+.. _ant: http://ant.apache.org/
