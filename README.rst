@@ -96,6 +96,12 @@ TODO
 
 Improvement ideas and bugs can be submitted to https://github.com/stisti/jenkins-app/issues
 
-There are already a few and some of them are such that I think they are beyond the capability of a simple AppleScript. I may have to create an actual Cocoa app.
+There are already a few and some of them are such that I think they are beyond the capability of a simple AppleScript. I may have to create an actual Cocoa app. (Although I have managed to push the AppleScript much further than I originally thought possible.)
+
+
+Contact me
+==========
+
+Either open an issue like described above or contact me in Twitter. My handle is @sti. If you tweet about Jenkins.app, you might want to use #jenkinsapp hashtag.
 
 .. _ant: http://ant.apache.org/
