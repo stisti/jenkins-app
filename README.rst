@@ -36,7 +36,7 @@ Starting Jenkins
 2. If this is the first time you have run Jenkins.app, it will download the actual Jenkins server software.
 3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the JVM options. This is where you can increase heap size or set jmx ports.
 4. Next, another dialog is shown asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins. You can also leave the command-line empty to go with the defaults.
-6. When Jenkins is up and running, your web browser will automatically open the Jenkins UI.
+5. When Jenkins is up and running, your web browser will automatically open the Jenkins UI.
 
 All the dialogs above wait for your input for maximum of 15 seconds. This makes it possible to start Jenkins.app automatically and unattended.
 
