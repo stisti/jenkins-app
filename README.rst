@@ -34,11 +34,13 @@ Starting Jenkins
 
 1. Double-click on Jenkins.app
 2. If this is the first time you have run Jenkins.app, it will download the actual Jenkins server software.
-3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins. You can also leave the command-line empty to go with the defaults.
-4. Click on OK to start the Jenkins server.
-5. Your web browser will automatically open the Jenkins UI.
+3. When the Jenkins server is ready to run, a dialog will be shown, asking if you want to customize the JVM options. This is where you can increase heap size or set jmx ports.
+4. Next, another dialog is shown asking if you want to customize the command-line used to start the Jenkins server. The command-line is explained at https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins. You can also leave the command-line empty to go with the defaults.
+6. When Jenkins is up and running, your web browser will automatically open the Jenkins UI.
 
-Jenkins.app will remember the command-line and the next time you start, it will default to the same command-line you used the last time.
+All the dialogs above wait for your input for maximum of 15 seconds. This makes it possible to start Jenkins.app automatically and unattended.
+
+Jenkins.app will remember the JVM and command-line settings and the next time you start, it will default to the same command-line you used the last time.
 
 Stopping Jenkins
 ===========
@@ -49,13 +51,16 @@ that long build you did not know was running.
 Upgrading Jenkins
 =================
 
-Jenkins project usually releases a new version every week. You can upgrade Jenkins normally in the Manage Jenkins page. Just tell Jenkins to restart itself. You do not have to stop and restart Jenkins.app. 
+Because Jenkins.app is just a front-end for the actual Jenkins server, they are updated independently of each other.
 
-Jenkins.app will check if there is a newer version available every time it starts.
+The Jenkins project usually releases a new version every week. You can upgrade Jenkins normally in the 
+Manage Jenkins page. Just tell Jenkins to restart itself. You do not have to stop and restart Jenkins.app. 
+
+Jenkins.app will check for new version of itself every time it starts. 
+If there is a new version available, a prompt will appear.
 If you want to upgrade Jenkins.app, a browser window will open to the Jenkins.app
 download site. Download the new version, unpack and drop it on the old version.
 
-Unfortunately this will make Jenkins.app forget the last command-line. I do not yet know why this happens.
 
 Uninstalling Jenkins
 =============
