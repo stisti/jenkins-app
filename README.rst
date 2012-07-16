@@ -120,6 +120,57 @@ Jenkins.app is an alternative way to run Jenkins on the Mac. Or you
 can use the official installer. You can choose the best for your
 situation.
 
+Security considerations
+=======================
+
+Jenkins is executes commands as you and the commands can be controlled
+using the Jenkins web UI. This is a security nightmare, unless you
+trust the network where your Mac sits and everyone in that network.
+
+What can you do? 
+
+First, you could create a dedicated user account for running
+Jenkins. If you enable fast user switching, you can continue using
+your Mac while Jenkins runs as another user.
+
+If you are the only one who needs to use Jenkins, you could tell
+Jenkins to bind to loopback interface only:
+``--httpListenAddress=127.0.0.1``
+
+If Jenkins needs to be usable to people on the network, you can turn
+on Jenkins security, forcing people to log in before they can see
+interesting things or make any changes. You can even assign people to
+groups that have various permissions. See 
+https://wiki.jenkins-ci.org/display/JENKINS/Securing+Jenkins for the
+details. 
+
+For extra security, you could do both of the above and run a reverse
+proxy, which controls access to Jenkins. Proxy servers often have more
+sophisticated access control mechanisms than Jenkins has.
+
+A sample Apache config file for setting up such a proxy would be
+something like:
+
+::
+
+  ProxyPass         /jenkins  http://localhost:8080/jenkins
+  ProxyPassReverse  /jenkins  http://localhost:8080/jenkins
+  ProxyRequests     Off
+  <Proxy http://localhost:8080/jenkins*>
+    Order deny,allow
+    Allow from 127.0.0.1
+  </Proxy>
+
+You could combine this with Jenkins command line:
+
+::
+
+  --httpListenAddress=127.0.0.1 --ajp13Port=-1 --prefix=/jenkins
+
+There is no need to disable HTTPS port, because it is disabled by
+default. The ``--prefix`` is needed to for Jenkin sto operate
+correctly after it is no longer at the root of the server.
+
 
 Technical details
 =================
