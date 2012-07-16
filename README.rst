@@ -168,7 +168,7 @@ You could combine this with Jenkins command line:
   --httpListenAddress=127.0.0.1 --ajp13Port=-1 --prefix=/jenkins
 
 There is no need to disable HTTPS port, because it is disabled by
-default. The ``--prefix`` is needed to for Jenkin sto operate
+default. The ``--prefix`` is needed to for Jenkins to operate
 correctly after it is no longer at the root of the server.
 
 
