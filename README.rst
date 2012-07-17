@@ -157,8 +157,10 @@ something like:
   ProxyPassReverse  /jenkins  http://localhost:8080/jenkins
   ProxyRequests     Off
   <Proxy http://localhost:8080/jenkins*>
-    Order deny,allow
-    Allow from 127.0.0.1
+    Order allow,deny
+    Allow from localhost
+    Allow from 192.168.1
+    Allow from .local
   </Proxy>
 
 You could combine this with Jenkins command line:
