@@ -42,7 +42,7 @@
     <delete file="Jenkins.app/Contents/Resources/utils.scpt"/>
     <delete file="Jenkins.app/Contents/Info.plist"/>
   </target>
-  <target name="zip" depends="main.scpt">
+  <target name="zip" depends="codesign">
     <exec executable="zip">
       <arg value="-r"/>
       <arg value="Jenkins_${env.BUILD_NUMBER}.zip"/>
