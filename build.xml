@@ -4,6 +4,13 @@
   <description>
     Build a working Jenkins.app by compiling applescript files and adding Info.plist.
   </description>
+  <target name="codesign" depends="main.scpt">
+    <exec executable="codesign" failonerror="true">
+      <arg value="-fs"/>
+      <arg value="${env.CODESIGNCERT}"/>
+      <arg value="Jenkins.app"/>
+    </exec>
+  </target>
   <target name="main.scpt" depends="Info.plist,utils.scpt">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts"/>
     <exec executable="osacompile">
@@ -35,7 +42,7 @@
     <delete file="Jenkins.app/Contents/Resources/utils.scpt"/>
     <delete file="Jenkins.app/Contents/Info.plist"/>
   </target>
-  <target name="zip" depends="main.scpt">
+  <target name="zip" depends="codesign">
     <exec executable="zip">
       <arg value="-r"/>
       <arg value="Jenkins_${env.BUILD_NUMBER}.zip"/>
