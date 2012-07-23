@@ -11,7 +11,13 @@
       <arg value="Jenkins.app"/>
     </exec>
   </target>
-  <target name="main.scpt" depends="Info.plist,utils.scpt">
+  <target name="Jenkins.app">
+    <mkdir dir="${basedir}/Jenkins.app"/>
+    <copy todir="${basedir}/Jenkins.app">
+      <fileset dir="Jenkins.app-skeleton"/>
+    </copy>
+  </target>
+  <target name="main.scpt" depends="Info.plist,utils.scpt,Jenkins.app">
     <mkdir dir="${basedir}/Jenkins.app/Contents/Resources/Scripts"/>
     <exec executable="osacompile">
       <arg value="-o"/>
@@ -19,14 +25,14 @@
       <arg value="${basedir}/main.applescript"/>
     </exec>
   </target>
-  <target name="utils.scpt">
+  <target name="utils.scpt" depends="Jenkins.app">
     <exec executable="osacompile">
       <arg value="-o"/>
       <arg value="${basedir}/Jenkins.app/Contents/Resources/utils.scpt"/>
       <arg value="${basedir}/utils.applescript"/>
     </exec>
   </target>
-  <target name="Info.plist">
+  <target name="Info.plist" depends="Jenkins.app">
     <copy file="Info.plist" tofile="Jenkins.app/Contents/Info.plist" overwrite="true"/>
     <replace file="Jenkins.app/Contents/Info.plist" token="@BUILD_NUMBER@" value="${env.BUILD_NUMBER}"/>
   </target>
@@ -34,13 +40,10 @@
     <get src="http://mirrors.jenkins-ci.org/war/latest/jenkins.war" dest="Jenkins.app/Contents/Resources/jenkins.war" verbose="off"/>
   </target>
   <target name="clean">
-    <delete file="Jenkins.app/Contents/Resources/jenkins.war"/>
+    <delete dir="${basedir}/Jenkins.app"/>
     <delete>
       <fileset file="Jenkins*.zip"/>
     </delete>
-    <delete file="Jenkins.app/Contents/Resources/Scripts/main.scpt"/>
-    <delete file="Jenkins.app/Contents/Resources/utils.scpt"/>
-    <delete file="Jenkins.app/Contents/Info.plist"/>
   </target>
   <target name="zip" depends="codesign">
     <exec executable="zip">
