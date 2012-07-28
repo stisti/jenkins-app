@@ -15,6 +15,20 @@ to install, uninstall, start and stop? Then Jenkins.app is for you.
 (What is Jenkins? Jenkins is software for 
 *continuous integration*. You can learn more about it at http://jenkins-ci.org)
 
+
+News
+====
+
+Jenkins.app is not properly codesigned, which prevents you from running it on 
+10.8 Mountain Lion. The workaround is to right-click Jenkins.app and choose Open.
+
+Builds < 49 have a partial (and thus broken) codesignature, which prevents even the 
+right-click open from working. Build 49 has been properly codesigned, but until I cough
+up $99 for Apple, we have to settle for a self-signed signature.
+
+I am finally convinced ant was a poor choice for a build tool. Ant is gone, make is 
+the new ant.
+
 Installation
 =======
 
@@ -27,9 +41,8 @@ From ready-to-run packages:
 
 Or you can also build it from the source using ant_ (which should be pre-installed on any Mac):
 
-1. ``export BUILD_NUMBER=0 # Or any other number you want``
-2. ``ant``
-3. You're done!
+1. ``make``
+2. You're done!
 
 
 Starting Jenkins
