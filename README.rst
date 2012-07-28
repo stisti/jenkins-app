@@ -39,7 +39,7 @@ From ready-to-run packages:
 3. (Optional) Move Jenkins.app wherever you want.
 4. You're done!
 
-Or you can also build it from the source using ant_ (which should be pre-installed on any Mac):
+Or you can also build it from the source using make:
 
 1. ``make``
 2. You're done!
@@ -225,5 +225,3 @@ Contact me
 Either open an issue like described above or contact me in Twitter. My
 handle is @sti. If you tweet about Jenkins.app, you might want to use
 #jenkinsapp hashtag.
-
-.. _ant: http://ant.apache.org/
