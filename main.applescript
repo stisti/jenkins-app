@@ -55,7 +55,6 @@ end this_is_latest_version
 on busy_executors()
 	try
 		set n to do shell script "curl -sfk '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors/text()'"
-		logger("Number of busy executors: " & n)
 		return (n as number)
 	on error eMsg number eNum
 		logger("Error in busy check: " & eMsg & " (" & eNum & ")")
@@ -77,6 +76,8 @@ on set_shutdown_mode(onoff)
 end set_shutdown_mode
 
 on run
+	global caffeinate_running
+	set caffeinate_running to false
 	tell application "Finder"
 		set utils to load script (path to resource "utils.scpt" in bundle (path to me))
 	end tell
@@ -228,5 +229,27 @@ on quit
 	try
 		do shell script "launchctl remove org.jenkins-ci.jenkins"
 	end try
+	try
+		do shell script "launchctl remove org.jenkins-ci.keepgoing"
+	end try
 	continue quit
 end quit
+
+on idle
+	global caffeinate_running
+	set b to busy_executors()
+	if b is greater than 0 and not caffeinate_running then
+		logger("There are " & b & " builds in progress. Preventing sleep.")
+		try
+			do shell script "launchctl submit -l org.jenkins-ci.keepgoing -- caffeinate -s -t 60"
+			set caffeinate_running to true
+		end try
+	else if b is equal to 0 and caffeinate_running then
+		logger("No builds in progress. Allowing system to sleep.")
+		try
+			do shell script "launchctl remove org.jenkins-ci.keepgoing"
+			set caffeinate_running to false
+		end try
+	end if
+	return 60
+end idle
