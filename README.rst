@@ -34,7 +34,7 @@ Installation
 
 From ready-to-run packages:
 
-1. Download Jenkins_NN.zip from https://github.com/stisti/jenkins-app/downloads.
+1. Download Jenkins_NN.zip from http://jenkins-app.s3-website-eu-west-1.amazonaws.com/.
 2. Double-click Jenkins_NN.zip to unpack Jenkins.app.
 3. (Optional) Move Jenkins.app wherever you want.
 4. You're done!
