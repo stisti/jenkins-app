@@ -52,15 +52,15 @@ on this_is_latest_version()
 	end if
 end this_is_latest_version
 
-on busy_executors()
+on jenkins_is_busy()
 	try
-		set n to do shell script "curl -sfk '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors/text()'"
-		return (n as number)
+		set ret to do shell script "curl -sfk '" & jenkins_url & "/computer/api/xml?xpath=/*/busyExecutors'"
+		return (ret is not equal to "<busyExecutors>0</busyExecutors>")
 	on error eMsg number eNum
 		logger("Error in busy check: " & eMsg & " (" & eNum & ")")
-		return 0
+		return false
 	end try
-end busy_executors
+end jenkins_is_busy
 
 on set_shutdown_mode(onoff)
 	if onoff then
@@ -209,14 +209,8 @@ end run
 
 on quit
 	set_shutdown_mode(true)
-	set b to busy_executors()
-	if b is greater than 0 then
-		if b is equal to 1 then
-			set xxx to "There is 1 build in progress."
-		else
-			set xxx to "There are " & b & " builds in progress."
-		end if
-		display alert "Jenkins is busy building something." & return & "Are you sure you want to quit?" message xxx as critical buttons {"Quit", "Cancel", "Go to Jenkins"}
+	if jenkins_is_busy() then
+		display alert "Jenkins is busy building something." & return & "Are you sure you want to quit?" message "Jenkins is busy" as critical buttons {"Quit", "Cancel", "Go to Jenkins"}
 		if button returned of the result is equal to "Go to Jenkins" then
 			set_shutdown_mode(false)
 			open location jenkins_url
@@ -237,14 +231,14 @@ end quit
 
 on idle
 	global caffeinate_running
-	set b to busy_executors()
-	if b is greater than 0 and not caffeinate_running then
-		logger("There are " & b & " builds in progress. Preventing sleep.")
+	set busy to jenkins_is_busy()
+	if busy and not caffeinate_running then
+		logger("Jenkins is busy. Preventing sleep.")
 		try
 			do shell script "launchctl submit -l org.jenkins-ci.keepgoing -- caffeinate -s -t 60"
 			set caffeinate_running to true
 		end try
-	else if b is equal to 0 and caffeinate_running then
+	else if not busy and caffeinate_running then
 		logger("No builds in progress. Allowing system to sleep.")
 		try
 			do shell script "launchctl remove org.jenkins-ci.keepgoing"
