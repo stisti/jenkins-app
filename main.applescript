@@ -43,7 +43,7 @@ end get_my_version
 on this_is_latest_version()
 	set myver to get_my_version()
 	logger("Current version: " & myver)
-	set latest to do shell script "curl -sfL https://github.com/downloads/stisti/jenkins-app/latest"
+	set latest to do shell script "curl -sf http://jenkins-app.s3-website-eu-west-1.amazonaws.com/latest.txt"
 	logger("Latest available version: " & latest)
 	if myver is less than latest then
 		return false
