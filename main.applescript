@@ -96,7 +96,7 @@ on run
 				logger("Update check: There is a newer Jenkins.app available")
 				display dialog "A newer version of Jenkins.app is available. Would you like to update?" & return & "(Automatic startup in 15 seconds.)" with title "Jenkins" with icon path_to_icon buttons {"Maybe later", "Update now"} default button "Update now" giving up after 15
 				if button returned of the result is equal to "Update now" then
-					open location "https://github.com/stisti/jenkins-app/downloads"
+					open location "http://jenkins-app.s3-website-eu-west-1.amazonaws.com/"
 					quit
 					(* To force quit to happen without continuing to the end of the handler, use the return statement to immediately return from handler. *)
 					return
