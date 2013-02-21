@@ -187,6 +187,21 @@ default. The ``--prefix`` is needed to for Jenkins to operate
 correctly after it is no longer at the root of the server.
 
 
+Tips
+====
+
+If you want to move JENKINS_HOME directory (the directory where
+Jenkins keeps the builds and job configurations), you can do it
+by setting ``JENKINS_HOME`` environment variable. Because Jenkins.app
+uses launchd to run Jenkins, you must ask launchd to set ``JENKINS_HOME``.
+
+::
+
+  launchctl setenv JENKINS_HOME /new/path/to/jenkins_home
+
+You have to do it before starting Jenkins.app.
+
+
 Technical details
 =================
 
