@@ -78,6 +78,7 @@ end set_shutdown_mode
 on run
 	global caffeinate_running
 	set caffeinate_running to false
+	
 	tell application "Finder"
 		set utils to load script (path to resource "utils.scpt" in bundle (path to me))
 	end tell
@@ -231,19 +232,28 @@ end quit
 
 on idle
 	global caffeinate_running
+	
 	set busy to jenkins_is_busy()
 	if busy and not caffeinate_running then
-		logger("Jenkins is busy. Preventing sleep.")
+		logger("Jenkins is busy. Preventing system sleep.")
 		try
-			do shell script "launchctl submit -l org.jenkins-ci.keepgoing -- caffeinate -s -t 60"
+			-- Prevent system sleep for 24 hours. Should be enough for most builds.
+			do shell script "launchctl submit -l org.jenkins-ci.keepgoing -- caffeinate -s -t 86400"
 			set caffeinate_running to true
+		on error error_message number exit_code
+			-- This is the error when the keepgoing job is already running
+			if exit_code = 1 and error_message = "launchctl caffeinate error: File exists" then
+				set caffeinate_running to true
+			else
+				logger("Failed to prevent system sleep: " & error_message)
+			end if
 		end try
 	else if not busy and caffeinate_running then
 		logger("No builds in progress. Allowing system to sleep.")
 		try
 			do shell script "launchctl remove org.jenkins-ci.keepgoing"
-			set caffeinate_running to false
 		end try
+		set caffeinate_running to false
 	end if
 	return 60
 end idle
