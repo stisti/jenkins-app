@@ -199,7 +199,8 @@ uses launchd to run Jenkins, you must ask launchd to set ``JENKINS_HOME``.
 
   launchctl setenv JENKINS_HOME /new/path/to/jenkins_home
 
-You have to do it before starting Jenkins.app.
+You have to do it before starting Jenkins.app. If you wan to make the change
+permanent, study ``man launchctl`` and ``man launchd.conf``
 
 
 Technical details
