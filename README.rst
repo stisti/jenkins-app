@@ -136,7 +136,7 @@ situation.
 Security considerations
 =======================
 
-Jenkins is executes commands as you and the commands can be controlled
+Jenkins executes commands as you and the commands can be controlled
 using the Jenkins web UI. This is a security nightmare, unless you
 trust the network where your Mac sits and everyone in that network.
 
