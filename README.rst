@@ -202,6 +202,9 @@ uses launchd to run Jenkins, you must ask launchd to set ``JENKINS_HOME``.
 You have to do it before starting Jenkins.app. If you wan to make the change
 permanent, study ``man launchctl`` and ``man launchd.conf``
 
+Actually, I've found launchd does not execute the commands in launchd.conf
+and this tip does not work across logouts.
+
 
 Technical details
 =================
